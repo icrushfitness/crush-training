@@ -1326,7 +1326,7 @@ function renderAuth(){
   return h + '<div class="greet"><h1 class="h-display" style="font-size:40px">' + (m === 'up' ? 'Create your account' : 'Welcome back') + '</h1>' +
     '<p class="note">' + (m === 'up' ? 'Your workouts save to your own account, on any phone.' : 'Sign in to pick up where you left off.') + '</p></div>' +
     (S.authMsg ? '<p class="warn" role="alert" style="text-align:left">' + esc(S.authMsg) + '</p>' : '') +
-    (m === 'up' ? '<div class="field"><label class="label" for="a-name">First name</label><input id="a-name" class="tinput" type="text" autocomplete="given-name" maxlength="30"></div>' : '') +
+    (m === 'up' ? '<div class="field"><label class="label" for="a-first">First name</label><input id="a-first" class="tinput" type="text" autocomplete="given-name" maxlength="30"></div><div class="field"><label class="label" for="a-last">Last name</label><input id="a-last" class="tinput" type="text" autocomplete="family-name" maxlength="30"></div>' : '') +
     (m === 'up' ? '<div class="field"><label class="label" for="a-phone">Mobile phone</label><input id="a-phone" class="tinput" type="tel" inputmode="tel" autocomplete="tel" maxlength="20"></div>' : '') +
     '<div class="field"><label class="label" for="a-email">Email</label><input id="a-email" class="tinput" type="email" inputmode="email" autocomplete="email" autocapitalize="off"></div>' +
     '<div class="field"><label class="label" for="a-pass">Password</label><input id="a-pass" class="tinput" type="password" autocomplete="' + (m === 'up' ? 'new-password' : 'current-password') + '"></div>' +
@@ -1334,7 +1334,7 @@ function renderAuth(){
     (m === 'in' ? '<button class="linkbtn" data-act="auth-reset">Forgot password?</button>' : '') +
     '<button class="linkish" style="align-self:center" data-act="auth-mode">' + (m === 'up' ? 'I already have an account' : 'New here? Create an account') + '</button></div>';
 }
-function authVals(){ var g = function(i){ var e = document.getElementById(i); return e ? e.value : ''; }; return { name:g('a-name').trim(), phone:g('a-phone').trim(), email:g('a-email').trim(), pass:g('a-pass') }; }
+function authVals(){ var g = function(i){ var e = document.getElementById(i); return e ? e.value : ''; }; return { name:(g('a-first').trim() + ' ' + g('a-last').trim()).trim(), first:g('a-first').trim(), last:g('a-last').trim(), phone:g('a-phone').trim(), email:g('a-email').trim(), pass:g('a-pass') }; }
 function authErr(e){
   var c = e && e.code || '';
   if (c === 'auth/invalid-credential' || c === 'auth/wrong-password' || c === 'auth/user-not-found') return 'Wrong email or password.';
@@ -1439,7 +1439,7 @@ var ACT = {
   'auth-go': async function(){
     var v = authVals(); S.authMsg = '';
     if (!v.email || !v.pass){ S.authMsg = 'Enter your email and password.'; render(); return; }
-    if (S.authMode === 'up' && !v.name){ S.authMsg = 'Add your first name.'; render(); return; }
+    if (S.authMode === 'up' && (!v.first || !v.last)){ S.authMsg = 'Add your first and last name.'; render(); return; }
     if (S.authMode === 'up' && v.phone.replace(/\D/g, '').length < 10){ S.authMsg = 'Add a mobile number with area code.'; render(); return; }
     S.authBusy = true;
     try{
